@@ -33,7 +33,7 @@
 			<h2>Can I have your number?</h2>
 
 			<form id="phoneForm">
-				<input id="phone" name="phone" type="tel" placeholder="Enter phone number" pattern="[0-9+()\-\s]{7,}" required />
+				<input id="phone" name="phone" type="tel" placeholder="phone number" pattern="[0-9+()\-\s]{7,}" required />
 				<div class="controls">
 					<button type="submit" class="submit">Submit</button>
 				</div>
@@ -44,14 +44,14 @@
 	</div>
 
 	<!-- Audio: replace with your music file URL or a hosted MP3. Autoplay requires muted autoplay; user must interact to unmute. -->
-	<audio id="bgAudio" src="C:\Users\HP\Downloads\happy-happy-happy-song.mp3" loop autoplay playsinline></audio>
+	<audio id="bgAudio" src="https://cdn.pixabay.com/download/audio/2022/02/07/audio_2c6e8a9a83.mp3?filename=relaxing-ambient-11080.mp3" loop autoplay playsinline></audio>
 
 	<script>
 		// CONFIG: set this to your server endpoint or a Form service (Formspree, Netlify Forms, Zapier webhook, etc.)
 		// Replace with your deployed server URL after deployment, for example:
 		// 'https://your-app.onrender.com/submit' or 'https://your-railway-app.up.railway.app/submit'
 		// While testing locally use: 'http://localhost:3000/submit'
-		const endpoint = 'https://askingher-xxxxx.onrender.com/submit';
+		const endpoint = 'https://askingher-3znf.onrender.com/submit';
 
 		const audio = document.getElementById('bgAudio');
 		// Start unmuted autoplay as requested (browsers may block audible autoplay)

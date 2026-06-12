@@ -36,8 +36,8 @@
     </div>
 
     <script>
-        // Change this URL to the address you want the Next button to open
-        const nextUrl = 'https://example.com';
+        // Redirect to the phone number page when the Next button is clicked
+        const nextUrl = 'phonenumber.html';
 
         const result = document.getElementById('result');
         document.getElementById('btnYes').addEventListener('click', ()=>{
@@ -51,7 +51,6 @@
         });
 
         document.getElementById('btnNext').addEventListener('click', ()=>{
-            // Navigate to the configured address
             window.location.href = nextUrl;
         });
     </script>
