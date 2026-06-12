@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Quick Question</title>
+    <style>
+        :root{--bg:#f7f7fb;--card:#fff;--muted:#6b7280}
+        html,body{height:100%}
+        body{font-family:system-ui,Segoe UI,Arial,sans-serif;margin:0;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:24px}
+        .card{background:var(--card);padding:24px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.06);max-width:460px;width:100%;text-align:center}
+        h1{margin:0 0 8px;font-size:1.25rem}
+        .message{color:var(--muted);margin:0 0 12px}
+        input[type="text"]{width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:8px;font-size:0.95rem}
+        .buttons{display:flex;gap:10px;justify-content:center;margin-top:14px}
+        button, .link-like{padding:10px 16px;border-radius:10px;border:0;cursor:pointer;font-weight:600}
+        .yes{background:#22c55e;color:#fff}
+        .no{background:#ef4444;color:#fff}
+        .next{background:#3b82f6;color:#fff}
+        .result{margin-top:16px;font-weight:700}
+        .small{font-size:0.85rem;color:#9ca3af;margin-top:8px}
+        @media (max-width:420px){.card{padding:18px}}
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Can I ask you something?</h1>
+        <p class="message">Hello — do you like me? 😊</p>
+        <div class="buttons">
+            <button class="yes" id="btnYes">Yes, I like you a lot ♥</button>
+            <button class="no" id="btnNo">No, I don't</button>
+            <button class="next" id="btnNext">Next</button>
+        </div>
+        <div class="result" id="result" aria-live="polite"></div>
+        <p class="small">Reply honestly.</p>
+    </div>
+
+    <script>
+        // Change this URL to the address you want the Next button to open
+        const nextUrl = 'https://example.com';
+
+        const result = document.getElementById('result');
+        document.getElementById('btnYes').addEventListener('click', ()=>{
+            result.textContent = 'I like you too! 😊';
+            result.style.color = '#15803d';
+        });
+
+        document.getElementById('btnNo').addEventListener('click', ()=>{
+            result.textContent = "nahh, that's not true! 😢";
+            result.style.color = '#b91c1c';
+        });
+
+        document.getElementById('btnNext').addEventListener('click', ()=>{
+            // Navigate to the configured address
+            window.location.href = nextUrl;
+        });
+    </script>
+</body>
+</html>

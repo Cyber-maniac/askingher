@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Phone Collector</title>
+	<style>
+		html,body{height:100%;margin:0}
+		body{font-family:system-ui,Segoe UI,Arial,sans-serif;display:flex;align-items:center;justify-content:center;background:#000;color:#fff}
+		.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+		.bg{position:fixed;inset:0;background-size:cover;background-position:center;filter:blur(2px) saturate(120%);z-index:0}
+		.card{position:relative;z-index:2;background:rgba(0,0,0,0.5);padding:24px;border-radius:12px;max-width:420px;width:92%;text-align:center}
+		input[type="tel"]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:transparent;color:#fff;margin-top:12px}
+		.controls{display:flex;gap:8px;justify-content:center;margin-top:14px}
+		button{padding:10px 14px;border-radius:8px;border:0;cursor:pointer}
+		.play{background:#10b981;color:#fff}
+		.submit{background:#3b82f6;color:#fff}
+		.unmute{position:absolute;top:12px;right:12px;z-index:3}
+		.unmute button{background:rgba(0,0,0,0.6);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
+		.small{font-size:0.85rem;color:#d1d5db;margin-top:10px}
+		.msg{margin-top:12px;font-weight:600}
+	</style>
+</head>
+<body>
+	<!-- Replace the URL below with any GIF you like; can be an online URL or local file when testing -->
+	<div class="bg" style="background-image:url('https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdnR4ODY5NGgwMHZiMXFraWg0MnNlY3FybnBvczJiaWVucTdzcjlncCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/TjSPQgowhhJdHgvnwA/giphy.gif')"></div>
+
+	<div class="overlay">
+		<div id="unmuteOverlay" class="unmute" style="display:none;">
+			<button id="unmuteBtn">Unmute</button>
+		</div>
+		<div class="card">
+			<h2>Can I have your number?</h2>
+
+			<form id="phoneForm">
+				<input id="phone" name="phone" type="tel" placeholder="Enter phone number" pattern="[0-9+()\-\s]{7,}" required />
+				<div class="controls">
+					<button type="submit" class="submit">Submit</button>
+				</div>
+			</form>
+
+			<div class="msg" id="message" aria-live="polite"></div>
+		</div>
+	</div>
+
+	<!-- Audio: replace with your music file URL or a hosted MP3. Autoplay requires muted autoplay; user must interact to unmute. -->
+	<audio id="bgAudio" src="C:\Users\HP\Downloads\happy-happy-happy-song.mp3" loop autoplay playsinline></audio>
+
+	<script>
+		// CONFIG: set this to your server endpoint or a Form service (Formspree, Netlify Forms, Zapier webhook, etc.)
+		// Replace with your deployed server URL after deployment, for example:
+		// 'https://your-app.onrender.com/submit' or 'https://your-railway-app.up.railway.app/submit'
+		// While testing locally use: 'http://localhost:3000/submit'
+		const endpoint = 'https://your-app.onrender.com/submit';
+
+		const audio = document.getElementById('bgAudio');
+		// Start unmuted autoplay as requested (browsers may block audible autoplay)
+		audio.muted = false;
+		// Try to play (may fail if browser blocks unmuted autoplay)
+		audio.play().catch(()=>{ console.warn('Autoplay failed or was blocked by the browser'); });
+
+		// Unmute overlay and handlers
+		const overlayElem = document.getElementById('unmuteOverlay');
+		const unmuteBtn = document.getElementById('unmuteBtn');
+		function unmuteAndHide(){
+			try{ audio.muted = false; audio.play().catch(()=>{}); } catch(e){}
+			if(overlayElem) overlayElem.style.display = 'none';
+		}
+		if(unmuteBtn) unmuteBtn.addEventListener('click', unmuteAndHide);
+		// Also unmute on first general click anywhere (one-time)
+		document.addEventListener('click', function onFirstClick(){ unmuteAndHide(); document.removeEventListener('click', onFirstClick, true); }, { once: true, capture: true });
+		const form = document.getElementById('phoneForm');
+		const phoneInput = document.getElementById('phone');
+		const msg = document.getElementById('message');
+
+		// Audio will autoplay muted on page load (many browsers require muted autoplay).
+
+		// When the form is submitted, POST the phone number to your configured endpoint.
+		form.addEventListener('submit', async (e)=>{
+			e.preventDefault();
+			msg.textContent = '';
+			const phone = phoneInput.value.trim();
+			if(!phone){ msg.textContent = 'Please enter a valid phone number.'; return; }
+
+			// Confirm consent before sending
+			if(!confirm('By submitting, you confirm the number owner has given consent. Proceed?')) return;
+
+			// Prepare payload
+			const payload = { phone, timestamp: new Date().toISOString() };
+
+			try{
+				const res = await fetch(endpoint, {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify(payload)
+				});
+
+				if(res.ok){
+					msg.style.color = '#10b981';
+					msg.textContent = 'Submitted — thank you.';
+				} else {
+					msg.style.color = '#f97316';
+					msg.textContent = 'Submission failed. Configure a valid endpoint (see comments).';
+				}
+			} catch(err){
+				msg.style.color = '#ef4444';
+				msg.textContent = 'Network error: could not submit. See console for details.';
+				console.error(err);
+			}
+		});
+
+		// NOTE: GitHub Pages can only host static files. To collect submissions you must:
+		// - Use a form backend service (Formspree, Netlify Forms, Google Forms, Zapier webhook)
+		// - OR host a small server (Node/Express, Python Flask) that accepts POST and then saves to disk, sends email, or triggers SMS via Twilio.
+		// I cannot help you capture numbers covertly or bypass user consent. If you want, I can add example server code (Node) that saves submissions to a text file or sends an email using SMTP/Twilio. Tell me which option you'd like.
+	</script>
+</body>
+</html>
