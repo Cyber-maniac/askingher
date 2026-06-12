@@ -59,12 +59,17 @@ app.get('/health', (req, res) => {
 });
 
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'q1.html'));
+});
+
+// Serve the phone page manually so the Next button works
+app.get('/phonenumber.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'phonenumber.html'));
 });
 
-// Fallback for any other route to serve the landing page
+// Fallback for any other route to send the main landing page
 app.use((req, res) => {
-  res.sendFile(path.join(__dirname, 'phonenumber.html'));
+  res.sendFile(path.join(__dirname, 'q1.html'));
 });
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
