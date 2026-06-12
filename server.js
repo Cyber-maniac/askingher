@@ -50,6 +50,21 @@ app.post('/submit', async (req, res) => {
   }
 });
 
-app.get('/', (req, res) => res.send('AskingHer receiver running'));
+// Serve the static landing page and any public assets
+app.use(express.static(path.join(__dirname)));
+
+// Health check for Render and monitoring
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', service: 'AskingHer receiver' });
+});
+
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'phonenumber.html'));
+});
+
+// Fallback for any other route to serve the landing page
+app.use((req, res) => {
+  res.sendFile(path.join(__dirname, 'phonenumber.html'));
+});
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
